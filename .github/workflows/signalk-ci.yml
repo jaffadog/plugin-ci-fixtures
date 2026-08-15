@@ -1,0 +1,11 @@
+name: SignalK Plugin CI Fixture — integration-smoke
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: jaffadog/signalk-server/.github/workflows/plugin-ci.yml@feat/separate-build-node-version
+    with:
+      enable-signalk-integration: true

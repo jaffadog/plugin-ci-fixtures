@@ -1,0 +1,15 @@
+{
+  "name": "signalk-plugin-ci-fixture-integration-smoke",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: a valid plugin with enable-signalk-integration: true, proving the integration job's core mechanism works in isolation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "test:integration": "node scripts/check-integration.js"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
