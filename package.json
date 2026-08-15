@@ -1,0 +1,21 @@
+{
+  "name": "signalk-plugin-ci-fixture-vite-build-node-split",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: builds with a current Vite (requires Node ^20.19.0 || >=22.12.0, incompatible with Node 18) on build-node-version, then installs and tests the built output across node-versions 18/20/22/24/26 plus a signalk-integration-matrix pinning sk2.0.0+node18 and sk-latest+node24 — the exact real-world scenario that motivated build-node-version.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "vite build",
+    "test": "node --test",
+    "test:integration": "node scripts/check-integration.js"
+  },
+  "keywords": [
+    "signalk-node-server-plugin"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0"
+  },
+  "license": "Apache-2.0"
+}

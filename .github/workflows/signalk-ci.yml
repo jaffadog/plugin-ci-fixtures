@@ -1,0 +1,14 @@
+name: SignalK Plugin CI Fixture — vite-build-node-split
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: jaffadog/signalk-server/.github/workflows/plugin-ci.yml@feat/separate-build-node-version
+    with:
+      build-node-version: '24'
+      node-versions: '["18", "20", "22", "24", "26"]'
+      enable-signalk-integration: true
+      signalk-integration-matrix: '[{"node-version": "18", "signalk-server-version": "2.0.0"}, {"node-version": "24", "signalk-server-version": "latest"}]'
