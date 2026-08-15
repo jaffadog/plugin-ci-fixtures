@@ -1,0 +1,19 @@
+{
+  "name": "signalk-plugin-ci-fixture-missing-pack-files",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: an exports sub-path pointing to a file excluded by the files allowlist.",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./extra": "./extra.js"
+  },
+  "files": ["index.js"],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
