@@ -43,7 +43,7 @@ it's worth checking directly rather than guessing.
 | --- | --- | --- |
 | `fixture/good-plugin` | Baseline — a fully valid plugin | **Green** |
 | `fixture/prepare-double-build` | A `prepare` script that would double-build if `--ignore-scripts` weren't applied consistently | **Green** — the build-count marker must show exactly 1 |
-| `fixture/malicious-postinstall` | A `postinstall` script that writes a marker file | **Green** — the marker must be *absent*, proving install-time scripts never ran |
+| `fixture/malicious-install-scripts` | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
 | `fixture/native-optional-broken` | An optional native dependency the plugin doesn't actually handle the absence of | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install |
 | `fixture/requires-cascade` | `signalk.requires` pointing at another fixture branch | **Green**, with `enable-signalk-integration: true` — the required package must install with `--ignore-scripts` same as the plugin itself |
 
