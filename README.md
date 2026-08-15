@@ -59,5 +59,32 @@ it's worth checking directly rather than guessing.
 independent scenario — its own CI run should be green (it's a normal valid plugin), but its
 purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 
-More fixtures (bad schema, bad lifecycle, deprecated API usage, missing pack files, stray files,
-a required — not optional — native addon) are planned; this list will grow.
+| Branch | Exercises | Expected CI result |
+| --- | --- | --- |
+| [`fixture/bad-schema`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-schema) | `plugin.schema()` throws | **Red** — fails "Validate plugin.schema() if defined" specifically |
+| [`fixture/bad-lifecycle`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-lifecycle) | `stop()` throws a real error (not a "mock gap" message pattern) | **Red** — fails "Test plugin stop()/start() lifecycle" on the first `stop()` call |
+| [`fixture/api-misuse`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-misuse) | `start()` reads `app.server`, an internal property | **Red** — fails the API-misuse scan (a static text match; the line never needs to execute) |
+| [`fixture/missing-pack-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/missing-pack-files) | An `exports` sub-path pointing at a file excluded by `files` | **Red** — fails "Verify npm pack includes all required files". `main`'s own file is always force-included by `npm pack` regardless of `files` (confirmed locally) — this fixture uses a named `exports` sub-path instead, since that *isn't* force-included |
+| [`fixture/stray-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/stray-files) | `test` writes an untracked file as a side effect | **Green, with a warning annotation** — the stray-files check is advisory-only (`::warning::`, never fails the build); see this branch's own README for why a passing run here doesn't fully verify the check still works |
+| [`fixture/native-required`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-required) | `bcrypt` as a *required* (not optional) dependency | **Red** — fails "Simulate App Store install" directly (the static scan errors on a required native addon), aborting the rest of the desktop job before the test step even runs |
+
+Every planned fixture from the original list is now built. `armv7` and the `Integration` job
+don't run every check the `desktop` job does (see individual fixture READMEs for which ones each
+skips) — that's a real scope boundary, not a gap to fix.
+
+## Running the whole suite
+
+`fixtures.json` is the machine-readable manifest (branch → expected conclusion, plus an optional
+`note` for fixtures whose expected conclusion alone doesn't fully verify them — e.g.
+`stray-files`). `scripts/run-all.js` triggers every branch, polls until all runs complete, and
+prints a table of expected vs. actual:
+
+```
+node scripts/run-all.js
+```
+
+Requires the `gh` CLI, authenticated, and Node. It's plain Node rather than a bash script on
+purpose — macOS ships bash 3.2 by default, which has no associative arrays at all and silently
+mis-parses `declare -A` instead of erroring, which would have made an earlier version of this
+script quietly corrupt its own bookkeeping on exactly the platform this repo's CI matrix tests
+against. Verified against real `gh run view`/`gh run list` output, not just syntax-checked.
