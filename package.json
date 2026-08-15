@@ -1,0 +1,17 @@
+{
+  "name": "signalk-plugin-ci-fixture-vulnerable-dependency",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: a real, known-vulnerable dependency to prove the npm audit step actually warns.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "minimist": "0.0.8"
+  },
+  "license": "Apache-2.0"
+}
