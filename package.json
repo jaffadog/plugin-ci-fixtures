@@ -1,0 +1,14 @@
+{
+  "name": "signalk-plugin-ci-fixture-restart-broken",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: stop() succeeds, but the second start() (restart, after a stop()) throws — a distinct failure path from stop() itself throwing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
