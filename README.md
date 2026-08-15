@@ -24,9 +24,18 @@ for what each branch expects.
 GitHub Actions does not allow `jobs.<id>.uses` to be a dynamic expression — the `@ref` in each
 fixture's caller workflow has to be a literal string. To point the whole suite at a
 signalk-server branch other than `master` (e.g. while a PR to `plugin-ci.yml` is still open),
-edit the `uses: SignalK/signalk-server/.github/workflows/plugin-ci.yml@<ref>` line on each branch
+edit the `uses: OWNER/signalk-server/.github/workflows/plugin-ci.yml@<ref>` line on each branch
 you care about and push. There's no way around this without changing `plugin-ci.yml`'s own
 contract, which isn't worth it just for this.
+
+**`OWNER` matters.** A branch that only exists on a contributor's fork (i.e. any PR that hasn't
+merged yet) is not resolvable as `SignalK/signalk-server@that-branch` — the upstream repo simply
+doesn't have it. Point at the fork that actually has the branch (e.g.
+`jaffadog/signalk-server/.github/workflows/plugin-ci.yml@feat/some-branch`), and switch back to
+`SignalK/signalk-server@master` once it's merged. Confirm with
+`git ls-remote --heads <repo-url> <branch>` before assuming — an unresolvable `uses:` fails the
+whole run immediately (0s, before any job starts), which looks identical to a config typo, so
+it's worth checking directly rather than guessing.
 
 ## Fixtures
 
