@@ -1,0 +1,16 @@
+{
+  "name": "signalk-plugin-ci-fixture-prepare-double-build",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: a prepare script that would double-build if --ignore-scripts weren't applied consistently.",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "node build.js",
+    "build": "node build.js",
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
