@@ -6,11 +6,17 @@ otherwise fully valid.
 
 **Expected result: red on `desktop`, green on `armv7`.** `desktop` fails "Validate entry point"
 (`::error::Plugin entry point does not export a function (got object)`) — verified locally
-against the extracted check script before pushing. Package.json validation passes. The schema
-and lifecycle checks both detect the constructor isn't callable and silently skip (exit 0, no
-output) rather than reporting their own errors — by design, since they'd just be re-describing
-the same root cause already reported by the entry-point check. The API-usage scan still runs
-and passes normally, since it's a pure static text scan that doesn't need a working constructor.
+against the extracted check script before pushing. "Validate package.json" passes first (it
+runs before entry-point validation in the step sequence). Confirmed against the real run:
+**every step after the failure — schema, lifecycle, the API-usage scan, npm pack, ES2023,
+App Store, tests, stray-files — shows `skipped`, not "pass" or its own error.** GitHub Actions
+skips all subsequent steps in a job once an earlier one fails (no `continue-on-error` here); a
+skipped step never "detects" anything or "runs and passes" — it never executes at all. (An
+earlier version of this README claimed otherwise, based on testing each check script
+independently rather than checking the real sequential job execution — corrected after
+reading actual step outcomes from a live run.) The API-usage scan is also, separately, now
+gated to run on only one representative desktop combination — moot for this specific fixture,
+since it would show `skipped` here either way.
 
 `armv7` is a genuinely different job, not a variant of `desktop` — its only steps are
 download-artifact, extract, QEMU setup, and running the plugin's own `npm test` (confirmed by
