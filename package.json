@@ -1,0 +1,15 @@
+{
+  "name": "signalk-plugin-ci-fixture-requires-cascade-dep",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: companion package for fixture/requires-cascade, installed via signalk.requires. Its postinstall must never run.",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node -e \"require('fs').writeFileSync('postinstall-ran.marker','yes')\"",
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
