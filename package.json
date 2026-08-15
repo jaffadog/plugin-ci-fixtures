@@ -1,0 +1,16 @@
+{
+  "name": "signalk-plugin-ci-fixture-fail-on-warning",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: the exact same warning-tier findings as fixture/api-usage-warnings, but with fail-on-warning: true set — proves the opt-in actually turns warnings into failures.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "signalk-node-server-plugin"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
