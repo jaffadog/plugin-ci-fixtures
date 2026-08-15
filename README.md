@@ -17,7 +17,10 @@ scoring" section of the main branch README.
 `start(<schema defaults>)`, distinct from every other lifecycle failure point (`bad-lifecycle`'s
 `stop()`, `restart-broken`'s second `start({})`) — verified locally against the extracted check
 script before pushing: `start({})` and the `{}`-based restart both log "ok", only the
-schema-defaults activation throws. Every other structural check passes. Also verified that this
+schema-defaults activation throws. Confirmed against a real run: every step after it — the
+API-usage scan, npm pack, ES2023, App Store, tests, stray-files — shows `skipped`. GitHub
+Actions skips all subsequent steps in a job once an earlier one fails (no `continue-on-error`
+here), so none of those checks actually execute on this fixture. Also verified that this
 addition causes zero regressions across `good-plugin`, `bad-schema`, `bad-lifecycle`,
 `prepare-double-build`, `restart-broken`, `api-misuse`, `api-usage-warnings`, and
 `bad-package-metadata` — none of them declare a schema with real default values, so the new
