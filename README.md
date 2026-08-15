@@ -10,13 +10,20 @@ them would still show up as a missing error line in the log even though the othe
 - `"version": "1.0"` — not valid semver.
 
 `index.js` is still a fully valid plugin, reachable via the entry-resolution fallback to
-`index.js` when `main`/`exports` are absent — so the entry-point, schema, lifecycle, and
-API-usage checks all still run and pass normally, isolating the failure to package.json
-validation specifically.
+`index.js` when `main`/`exports` are absent.
 
-**Expected result: red on `desktop`, green on `armv7`.** `desktop` fails "Validate package.json"
-with all three errors reported together — verified locally against the extracted check script
-before pushing. Every other `desktop` structural check passes.
+**Expected result: red on `desktop`, green on `armv7`.** `validate-pkg.js` is pure static
+analysis of package.json/source files — its result can't differ by OS or Node version, so it
+only runs on one representative desktop combination (`ubuntu-latest` + the first entry in
+`node-versions`) instead of all 12; the other 11 show `skip` for that step specifically, but
+still run their own entry-point/schema/lifecycle/API-usage checks normally. On the
+representative combination, "Validate package.json" fails with all three errors reported
+together — verified locally against the extracted check script before pushing. Confirmed
+against the real run: **every step after it in that same job shows `skipped`, not "pass"** —
+GitHub Actions skips all subsequent steps in a job once an earlier one fails (no
+`continue-on-error` here), so entry-point/schema/lifecycle/API-usage never actually execute on
+this fixture, on any combination. The overall `desktop` result is still correctly "failure"
+either way, since one failing instance fails the whole matrix.
 
 `armv7` is a genuinely different job — its only steps are download-artifact, extract, QEMU
 setup, and running the plugin's own `npm test` (confirmed by reading the job's step list
