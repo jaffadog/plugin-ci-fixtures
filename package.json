@@ -1,0 +1,18 @@
+{
+  "name": "signalk-plugin-ci-fixture-requires-cascade",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: signalk.requires pointing at requires-cascade-dep, proving the cascade install also honors --ignore-scripts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "test:integration": "node scripts/check-integration.js"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "signalk": {
+    "requires": ["github:jaffadog/plugin-ci-fixtures#fixture/requires-cascade-dep"]
+  },
+  "license": "Apache-2.0"
+}
