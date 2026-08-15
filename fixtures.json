@@ -24,6 +24,7 @@
     "expected": "success",
     "note": "advisory-only check (npm audit ::warning::, never fails the build) — a passing run here is necessary but not sufficient; see this branch's own README"
   },
+  { "branch": "fixture/fail-on-warning", "expected": "failure" },
   { "branch": "fixture/missing-pack-files", "expected": "failure" },
   {
     "branch": "fixture/stray-files",
