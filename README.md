@@ -49,6 +49,8 @@ it's worth checking directly rather than guessing.
 | Branch | Exercises | Expected CI result |
 | --- | --- | --- |
 | [`fixture/good-plugin`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/good-plugin) | Baseline — a fully valid plugin | **Green** |
+| [`fixture/bad-package-metadata`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-package-metadata) | Missing the `signalk-node-server-plugin` keyword, missing `main`/`exports`, and an invalid (non-semver) `version` | **Red** — fails "Validate package.json" with all three reported together |
+| [`fixture/bad-entry-point`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-entry-point) | Entry point exports a plain object instead of a constructor function | **Red** — fails "Validate entry point"; schema/lifecycle checks silently skip rather than double-reporting the same root cause |
 | [`fixture/prepare-double-build`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/prepare-double-build) | A `prepare` script that would double-build if `--ignore-scripts` weren't applied consistently | **Green** — the build-count marker must show exactly 1 |
 | [`fixture/malicious-install-scripts`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/malicious-install-scripts) | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
 | [`fixture/integration-smoke`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/integration-smoke) | `enable-signalk-integration: true` on an otherwise-valid plugin, with a `test:integration` script that pings the server | **Green**, including the `Integration` job — proves the job's core mechanism works before layering harder scenarios on top |
@@ -68,28 +70,30 @@ it's worth checking directly rather than guessing.
 independent scenario — its own CI run should be green (it's a normal valid plugin), but its
 purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 
-Every planned fixture from the original list is now built, plus four added later by auditing
+Every planned fixture from the original list is now built, plus six added later by auditing
 `plugin-ci.yml`'s own CI-summary checklist against this suite and closing what it found
 uncovered: `vite-build-node-split` (reproduces the PR's own original motivating bug report
 end-to-end), the extended `api-misuse` and new `api-usage-warnings` (the full API-usage scan,
-both severity tiers), and `restart-broken` (the lifecycle check's second-`start()` failure
-path, distinct from `bad-lifecycle`'s `stop()` failure). `armv7` and the `Integration` job
-don't run every check the `desktop` job does (see individual fixture READMEs for which ones
-each skips) — that's a real scope boundary, not a gap to fix.
+both severity tiers), `restart-broken` (the lifecycle check's second-`start()` failure path,
+distinct from `bad-lifecycle`'s `stop()` failure), and `bad-package-metadata` /
+`bad-entry-point` (the two highest-priority package.json/entry-point negative cases). `armv7`
+and the `Integration` job don't run every check the `desktop` job does (see individual fixture
+READMEs for which ones each skips) — that's a real scope boundary, not a gap to fix.
 
-Known remaining gaps in this checklist, not yet built: negative cases for the package.json
-field checks and entry-point check (nothing tests a *missing* keyword/main/exports or a
-non-function export), `plugin.schema()` returning a non-object or omitting
-`type`/`properties`/`oneOf`/`anyOf` (only the throws-an-error path is covered), `node:sqlite`
-usage without a matching `engines.node`, hardcoded `/home/user/...` paths, ES2024+ syntax
-tripping the ES2023/Cerbo GX compatibility check, bundling a private copy of `baconjs`, and a
-`webapp`-keyword plugin declaring React < 19.
+Known remaining gaps in this checklist, not yet built: `plugin.schema()` returning a non-object,
+`plugin.schema()` containing functions/symbols/circular references/`undefined` property values
+(a JSON-serialization-safety check, distinct from the "returns non-object" and "throws" paths,
+found while re-verifying this list — also zero coverage), or omitting
+`type`/`properties`/`oneOf`/`anyOf` (only the throws-an-error path is covered by `bad-schema`),
+`node:sqlite` usage without a matching `engines.node`, hardcoded `/home/user/...` paths,
+ES2024+ syntax tripping the ES2023/Cerbo GX compatibility check, bundling a private copy of
+`baconjs`, and a `webapp`-keyword plugin declaring React < 19.
 
 `validate-pkg.js` also has several checks the CI job's own step-summary text never mentions,
 found only by reading the full check source rather than that summary — so they were missed in
-the first pass above too, and have zero fixture coverage: a missing or non-semver `version`
-field, a warning when `preinstall`/`postinstall`/`install` scripts are declared in
-`package.json` (separate from the actual `--ignore-scripts` enforcement in the "App Store
+the first pass above too. `bad-package-metadata` now covers the invalid-semver-`version` one;
+still zero coverage on: a warning when `preinstall`/`postinstall`/`install` scripts are declared
+in `package.json` (separate from the actual `--ignore-scripts` enforcement in the "App Store
 install" step), a warning when `engines.node` is entirely absent (distinct from the
 `node:sqlite`-specific engines mismatch above), a warning when no `CHANGELOG.md`-family file or
 `.github/release.yml` exists, a warning when `signalk.screenshots` is empty, and a warning when

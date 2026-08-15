@@ -1,5 +1,7 @@
 [
   { "branch": "fixture/good-plugin", "expected": "success" },
+  { "branch": "fixture/bad-package-metadata", "expected": "failure" },
+  { "branch": "fixture/bad-entry-point", "expected": "failure" },
   { "branch": "fixture/prepare-double-build", "expected": "success" },
   { "branch": "fixture/malicious-install-scripts", "expected": "success" },
   { "branch": "fixture/integration-smoke", "expected": "success" },
