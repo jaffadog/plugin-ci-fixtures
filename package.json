@@ -1,0 +1,12 @@
+{
+  "name": "signalk-plugin-ci-fixture-bad-package-metadata",
+  "version": "1.0",
+  "description": "plugin-ci.yml fixture: missing the signalk-node-server-plugin keyword, missing main/exports, and an invalid (non-semver) version.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
