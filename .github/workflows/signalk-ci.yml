@@ -6,4 +6,4 @@ on:
 
 jobs:
   test:
-    uses: SignalK/signalk-server/.github/workflows/plugin-ci.yml@feat/separate-build-node-version
+    uses: jaffadog/signalk-server/.github/workflows/plugin-ci.yml@feat/separate-build-node-version
