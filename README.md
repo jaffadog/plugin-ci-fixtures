@@ -53,7 +53,11 @@ it's worth checking directly rather than guessing.
 | [`fixture/malicious-install-scripts`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/malicious-install-scripts) | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
 | [`fixture/integration-smoke`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/integration-smoke) | `enable-signalk-integration: true` on an otherwise-valid plugin, with a `test:integration` script that pings the server | **Green**, including the `Integration` job — proves the job's core mechanism works before layering harder scenarios on top |
 | [`fixture/native-optional-broken`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-optional-broken) | An optional native dependency (`bcrypt`) the plugin requires unconditionally, no try/catch | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install. `armv7` passes — it has no equivalent uncompiled-reinstall step |
-| `fixture/requires-cascade` *(planned)* | `signalk.requires` pointing at another fixture branch | **Green**, with `enable-signalk-integration: true` — the required package must install with `--ignore-scripts` same as the plugin itself |
+| [`fixture/requires-cascade`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade) | `signalk.requires` pointing at [`fixture/requires-cascade-dep`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade-dep) via a `github:` git-URL specifier | **Green**, with `enable-signalk-integration: true` — `test:integration` confirms the server is reachable *and* that the required package's `postinstall` never ran |
+
+`fixture/requires-cascade-dep` is a companion package for `requires-cascade` above, not an
+independent scenario — its own CI run should be green (it's a normal valid plugin), but its
+purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 
 More fixtures (bad schema, bad lifecycle, deprecated API usage, missing pack files, stray files,
 a required — not optional — native addon) are planned; this list will grow.
