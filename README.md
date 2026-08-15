@@ -55,19 +55,16 @@ it's worth checking directly rather than guessing.
 | [`fixture/vite-build-node-split`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/vite-build-node-split) | The exact real-world scenario that motivated this PR: `vite` (`engines.node: "^20.19.0 \|\| >=22.12.0"`) as the build tool on `build-node-version: '24'`, tested across `node-versions: ["18","20","22","24","26"]`, plus a `signalk-integration-matrix` pinning sk2.0.0+node18 and sk-latest+node24 | **Green** — before this PR, the Node 18 job would have tried to run `vite build` itself and failed outright |
 | [`fixture/native-optional-broken`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-optional-broken) | An optional native dependency (`bcrypt`) the plugin requires unconditionally, no try/catch | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install. `armv7` passes — it has no equivalent uncompiled-reinstall step |
 | [`fixture/requires-cascade`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade) | `signalk.requires` pointing at [`fixture/requires-cascade-dep`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade-dep) via a `github:` git-URL specifier | **Green**, with `enable-signalk-integration: true` — `test:integration` confirms the server is reachable *and* that the required package's `postinstall` never ran |
-
-`fixture/requires-cascade-dep` is a companion package for `requires-cascade` above, not an
-independent scenario — its own CI run should be green (it's a normal valid plugin), but its
-purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
-
-| Branch | Exercises | Expected CI result |
-| --- | --- | --- |
 | [`fixture/bad-schema`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-schema) | `plugin.schema()` throws | **Red** — fails "Validate plugin.schema() if defined" specifically |
 | [`fixture/bad-lifecycle`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-lifecycle) | `stop()` throws a real error (not a "mock gap" message pattern) | **Red** — fails "Test plugin stop()/start() lifecycle" on the first `stop()` call |
 | [`fixture/api-misuse`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-misuse) | `start()` reads `app.server`, an internal property | **Red** — fails the API-misuse scan (a static text match; the line never needs to execute) |
 | [`fixture/missing-pack-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/missing-pack-files) | An `exports` sub-path pointing at a file excluded by `files` | **Red** — fails "Verify npm pack includes all required files". `main`'s own file is always force-included by `npm pack` regardless of `files` (confirmed locally) — this fixture uses a named `exports` sub-path instead, since that *isn't* force-included |
 | [`fixture/stray-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/stray-files) | `test` writes an untracked file as a side effect | **Green, with a warning annotation** — the stray-files check is advisory-only (`::warning::`, never fails the build); see this branch's own README for why a passing run here doesn't fully verify the check still works |
 | [`fixture/native-required`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-required) | `bcrypt` as a *required* (not optional) dependency | **Red** — fails "Simulate App Store install" directly (the static scan errors on a required native addon), aborting the rest of the desktop job before the test step even runs |
+
+`fixture/requires-cascade-dep` is a companion package for `requires-cascade` above, not an
+independent scenario — its own CI run should be green (it's a normal valid plugin), but its
+purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 
 Every planned fixture from the original list is now built, plus `vite-build-node-split`, which
 reproduces the PR's own original motivating bug report end-to-end rather than a synthesized
