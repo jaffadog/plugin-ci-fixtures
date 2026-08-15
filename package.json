@@ -1,0 +1,14 @@
+{
+  "name": "signalk-plugin-ci-fixture-bad-schema-default",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: start({}) succeeds, but start() with the plugin's own schema-declared default config throws.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
