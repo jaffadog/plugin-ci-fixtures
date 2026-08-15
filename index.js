@@ -7,11 +7,16 @@ module.exports = function (app) {
       properties: {}
     },
     start: function () {
-      // app.server is an internal property, not part of the plugin API.
-      // The API-misuse scan is a static text match — this line does not
-      // need to actually execute to be caught, but it's here in a
-      // realistic position (inside start()) rather than as dead code.
-      const internal = app.server
+      // Each of these accesses an internal/misuse-tier property flagged by
+      // the API-misuse scan (error, not warning) — grouped here so one
+      // fixture exercises the whole "misuse" pattern set, not just
+      // app.server. Static text matches — none of these need to throw or
+      // even be reachable to be caught, but they're real property reads in
+      // a realistic position (inside start()) rather than dead code.
+      const server = app.server
+      const deltaCache = app.deltaCache
+      const pluginsMap = app.pluginsMap
+      const historyApiHttpRegistry = app.historyApiHttpRegistry
       app.setPluginStatus('Started')
     },
     stop: function () {}
