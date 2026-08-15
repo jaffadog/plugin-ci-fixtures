@@ -41,11 +41,12 @@ it's worth checking directly rather than guessing.
 
 | Branch | Exercises | Expected CI result |
 | --- | --- | --- |
-| `fixture/good-plugin` | Baseline — a fully valid plugin | **Green** |
-| `fixture/prepare-double-build` | A `prepare` script that would double-build if `--ignore-scripts` weren't applied consistently | **Green** — the build-count marker must show exactly 1 |
-| `fixture/malicious-install-scripts` | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
-| `fixture/native-optional-broken` | An optional native dependency the plugin doesn't actually handle the absence of | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install |
-| `fixture/requires-cascade` | `signalk.requires` pointing at another fixture branch | **Green**, with `enable-signalk-integration: true` — the required package must install with `--ignore-scripts` same as the plugin itself |
+| [`fixture/good-plugin`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/good-plugin) | Baseline — a fully valid plugin | **Green** |
+| [`fixture/prepare-double-build`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/prepare-double-build) | A `prepare` script that would double-build if `--ignore-scripts` weren't applied consistently | **Green** — the build-count marker must show exactly 1 |
+| [`fixture/malicious-install-scripts`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/malicious-install-scripts) | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
+| [`fixture/integration-smoke`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/integration-smoke) | `enable-signalk-integration: true` on an otherwise-valid plugin, with a `test:integration` script that pings the server | **Green**, including the `Integration` job — proves the job's core mechanism works before layering harder scenarios on top |
+| `fixture/native-optional-broken` *(planned)* | An optional native dependency the plugin doesn't actually handle the absence of | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install |
+| `fixture/requires-cascade` *(planned)* | `signalk.requires` pointing at another fixture branch | **Green**, with `enable-signalk-integration: true` — the required package must install with `--ignore-scripts` same as the plugin itself |
 
 More fixtures (bad schema, bad lifecycle, deprecated API usage, missing pack files, stray files,
 a required — not optional — native addon) are planned; this list will grow.
