@@ -23,5 +23,15 @@ a passing run here is necessary but not sufficient: the run conclusion alone can
 "all eleven warnings still fire" from "the scan silently stopped matching some of them" — that
 needs a human to actually read the job log/step summary.
 
+The API-usage scan is also now gated to run on only one representative desktop combination
+(`ubuntu-latest` + the first entry in `node-versions`), since it's pure static analysis and its
+result can't differ by OS/Node version — the other 11 desktop jobs show `skip` for that step
+and the same "pass" as always for everything else. Unlike the error-tier fixtures, warnings
+never cause a step to exit non-zero, so there's no cascading skip here — reasoned from the
+script's own logic (`errors.length > 0` gates the only `exit 1`, not `warnings`), not yet
+confirmed against a live run since this fixture hasn't been re-triggered against the updated
+`plugin-ci.yml` as of this writing. The per-job "Write job summary" table should show
+`⚠️ 11 warnings` on the representative job's "API usage" row instead of a bare "pass".
+
 See the [main branch README](https://github.com/jaffadog/plugin-ci-fixtures/blob/main/README.md)
 for how this repo's branch-per-fixture scheme works.
