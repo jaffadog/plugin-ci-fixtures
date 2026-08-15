@@ -1,4 +1,4 @@
-name: SignalK Plugin CI Fixture — malicious-postinstall
+name: SignalK Plugin CI Fixture — malicious-install-scripts
 
 on:
   push:

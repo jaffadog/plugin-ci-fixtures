@@ -3,11 +3,13 @@ const assert = require('node:assert')
 const fs = require('fs')
 const path = require('path')
 
-test('postinstall never executed anywhere in this pipeline', () => {
-  const markerPath = path.join(__dirname, '..', 'postinstall-ran.marker')
+test('no install-time script ever executed anywhere in this pipeline', () => {
+  const logPath = path.join(__dirname, '..', 'install-scripts-ran.log')
+  const ran = fs.existsSync(logPath) ? fs.readFileSync(logPath, 'utf8').trim() : ''
   assert.strictEqual(
-    fs.existsSync(markerPath),
-    false,
-    'postinstall ran and wrote its marker file — some install step in the pipeline did not honor --ignore-scripts'
+    ran,
+    '',
+    `these install-time scripts ran when they should not have: [${ran.split('\n').join(', ')}] — ` +
+      'some install step in the pipeline did not honor --ignore-scripts'
   )
 })

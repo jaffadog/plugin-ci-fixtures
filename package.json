@@ -1,10 +1,12 @@
 {
-  "name": "signalk-plugin-ci-fixture-malicious-postinstall",
+  "name": "signalk-plugin-ci-fixture-malicious-install-scripts",
   "version": "1.0.0",
-  "description": "plugin-ci.yml fixture: a postinstall script that must never execute anywhere in the pipeline.",
+  "description": "plugin-ci.yml fixture: preinstall/install/postinstall scripts that must never execute anywhere in the pipeline.",
   "main": "index.js",
   "scripts": {
-    "postinstall": "node -e \"require('fs').writeFileSync('postinstall-ran.marker','yes')\"",
+    "preinstall": "node -e \"require('fs').appendFileSync('install-scripts-ran.log', 'preinstall\\n')\"",
+    "install": "node -e \"require('fs').appendFileSync('install-scripts-ran.log', 'install\\n')\"",
+    "postinstall": "node -e \"require('fs').appendFileSync('install-scripts-ran.log', 'postinstall\\n')\"",
     "test": "node --test"
   },
   "keywords": ["signalk-node-server-plugin"],

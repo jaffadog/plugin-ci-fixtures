@@ -1,7 +1,7 @@
 module.exports = function (app) {
   const plugin = {
-    id: 'malicious-postinstall',
-    name: 'Malicious Postinstall (CI fixture)',
+    id: 'malicious-install-scripts',
+    name: 'Malicious Install Scripts (CI fixture)',
     schema: {
       type: 'object',
       properties: {}
