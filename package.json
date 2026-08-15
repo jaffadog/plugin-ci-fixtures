@@ -1,0 +1,14 @@
+{
+  "name": "signalk-plugin-ci-fixture-good-plugin",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: a fully valid plugin, expected to pass every check.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,9 @@
+name: SignalK Plugin CI Fixture — good-plugin
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: SignalK/signalk-server/.github/workflows/plugin-ci.yml@feat/separate-build-node-version
