@@ -9,7 +9,13 @@
   { "branch": "fixture/requires-cascade", "expected": "success" },
   { "branch": "fixture/bad-schema", "expected": "failure" },
   { "branch": "fixture/bad-lifecycle", "expected": "failure" },
+  { "branch": "fixture/restart-broken", "expected": "failure" },
   { "branch": "fixture/api-misuse", "expected": "failure" },
+  {
+    "branch": "fixture/api-usage-warnings",
+    "expected": "success",
+    "note": "advisory-only check (::warning:: x11, never fails the build) — this fixture's run conclusion alone can't distinguish 'all eleven still fire' from 'the scan silently stopped matching some of them'; a passing run here is necessary but not sufficient"
+  },
   { "branch": "fixture/missing-pack-files", "expected": "failure" },
   {
     "branch": "fixture/stray-files",

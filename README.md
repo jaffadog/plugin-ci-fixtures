@@ -57,7 +57,9 @@ it's worth checking directly rather than guessing.
 | [`fixture/requires-cascade`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade) | `signalk.requires` pointing at [`fixture/requires-cascade-dep`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade-dep) via a `github:` git-URL specifier | **Green**, with `enable-signalk-integration: true` — `test:integration` confirms the server is reachable *and* that the required package's `postinstall` never ran |
 | [`fixture/bad-schema`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-schema) | `plugin.schema()` throws | **Red** — fails "Validate plugin.schema() if defined" specifically |
 | [`fixture/bad-lifecycle`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-lifecycle) | `stop()` throws a real error (not a "mock gap" message pattern) | **Red** — fails "Test plugin stop()/start() lifecycle" on the first `stop()` call |
-| [`fixture/api-misuse`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-misuse) | `start()` reads `app.server`, an internal property | **Red** — fails the API-misuse scan (a static text match; the line never needs to execute) |
+| [`fixture/restart-broken`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/restart-broken) | `stop()` succeeds, but the *second* `start()` (the restart re-entry) throws | **Red** — fails the same lifecycle check as `bad-lifecycle`, but at a distinct step: `stop()` throwing exits before the second `start()` is ever reached, so this is separate coverage, not a duplicate |
+| [`fixture/api-misuse`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-misuse) | `start()` reads `app.server`, `app.deltaCache`, `app.pluginsMap`, and `historyApiHttpRegistry` — the full "misuse" (error) tier of the API-usage scan | **Red** — fails the API-misuse scan with all four reported together (static text matches; none need to execute) |
+| [`fixture/api-usage-warnings`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-usage-warnings) | The eleven warning-tier patterns in the same scan: deprecated APIs, a direct-Express-route anti-pattern, 3 file-storage anti-patterns, 5 security anti-patterns | **Green, with eleven warning annotations** — like `stray-files`, a passing run here is necessary but not sufficient; see this branch's own README |
 | [`fixture/missing-pack-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/missing-pack-files) | An `exports` sub-path pointing at a file excluded by `files` | **Red** — fails "Verify npm pack includes all required files". `main`'s own file is always force-included by `npm pack` regardless of `files` (confirmed locally) — this fixture uses a named `exports` sub-path instead, since that *isn't* force-included |
 | [`fixture/stray-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/stray-files) | `test` writes an untracked file as a side effect | **Green, with a warning annotation** — the stray-files check is advisory-only (`::warning::`, never fails the build); see this branch's own README for why a passing run here doesn't fully verify the check still works |
 | [`fixture/native-required`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-required) | `bcrypt` as a *required* (not optional) dependency | **Red** — fails "Simulate App Store install" directly (the static scan errors on a required native addon), aborting the rest of the desktop job before the test step even runs |
@@ -66,11 +68,22 @@ it's worth checking directly rather than guessing.
 independent scenario — its own CI run should be green (it's a normal valid plugin), but its
 purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 
-Every planned fixture from the original list is now built, plus `vite-build-node-split`, which
-reproduces the PR's own original motivating bug report end-to-end rather than a synthesized
-scenario. `armv7` and the `Integration` job don't run every check the `desktop` job does (see
-individual fixture READMEs for which ones each skips) — that's a real scope boundary, not a gap
-to fix.
+Every planned fixture from the original list is now built, plus four added later by auditing
+`plugin-ci.yml`'s own CI-summary checklist against this suite and closing what it found
+uncovered: `vite-build-node-split` (reproduces the PR's own original motivating bug report
+end-to-end), the extended `api-misuse` and new `api-usage-warnings` (the full API-usage scan,
+both severity tiers), and `restart-broken` (the lifecycle check's second-`start()` failure
+path, distinct from `bad-lifecycle`'s `stop()` failure). `armv7` and the `Integration` job
+don't run every check the `desktop` job does (see individual fixture READMEs for which ones
+each skips) — that's a real scope boundary, not a gap to fix.
+
+Known remaining gaps in this checklist, not yet built: negative cases for the package.json
+field checks and entry-point check (nothing tests a *missing* keyword/main/exports or a
+non-function export), `plugin.schema()` returning a non-object or omitting
+`type`/`properties`/`oneOf`/`anyOf` (only the throws-an-error path is covered), `node:sqlite`
+usage without a matching `engines.node`, hardcoded `/home/user/...` paths, ES2024+ syntax
+tripping the ES2023/Cerbo GX compatibility check, bundling a private copy of `baconjs`, and a
+`webapp`-keyword plugin declaring React < 19.
 
 ## Running the whole suite
 
