@@ -85,6 +85,66 @@ usage without a matching `engines.node`, hardcoded `/home/user/...` paths, ES202
 tripping the ES2023/Cerbo GX compatibility check, bundling a private copy of `baconjs`, and a
 `webapp`-keyword plugin declaring React < 19.
 
+`validate-pkg.js` also has several checks the CI job's own step-summary text never mentions,
+found only by reading the full check source rather than that summary — so they were missed in
+the first pass above too, and have zero fixture coverage: a missing or non-semver `version`
+field, a warning when `preinstall`/`postinstall`/`install` scripts are declared in
+`package.json` (separate from the actual `--ignore-scripts` enforcement in the "App Store
+install" step), a warning when `engines.node` is entirely absent (distinct from the
+`node:sqlite`-specific engines mismatch above), a warning when no `CHANGELOG.md`-family file or
+`.github/release.yml` exists, a warning when `signalk.screenshots` is empty, and a warning when
+`signalk.appIcon`/`signalk.screenshots` paths don't resolve to real files in the repo.
+
+### Differences from signalk-plugin-registry's scoring
+
+[SignalK/signalk-plugin-registry](https://github.com/SignalK/signalk-plugin-registry) runs its
+own, independent test-and-score harness over published plugins. Comparing its scoring
+dimensions (`test-harness/score.ts`, `runner.ts`, `detect-providers.ts`, `app-shim.ts`,
+`core-deps.ts`) against `plugin-ci.yml` surfaced real scope differences — not fixture gaps,
+since there's no `plugin-ci.yml` behavior for a fixture to exercise. Fixing these would mean
+changing `plugin-ci.yml` itself, not this suite:
+
+- **Activation config**: `plugin-ci.yml`'s lifecycle check only ever calls `start({})` with a
+  literally empty config. The registry additionally activates with config built from the
+  plugin's own `schema` defaults (`extractSchemaDefaults`). A bug that only fires once a
+  schema-default field is actually populated (e.g. an assumed-present default array) passes
+  `plugin-ci.yml` and fails the registry.
+- **API misuse detection**: `plugin-ci.yml` statically greps source for ~15 hardcoded known-bad
+  patterns. The registry wraps its mock `app` in a `Proxy` and dynamically captures *any*
+  access to a property the shim doesn't define — it catches unknown/future misuse patterns for
+  free, but (per its `TestResults`/score wiring) doesn't currently turn that into a score
+  penalty or an actionable message the way `plugin-ci.yml`'s scan does for the patterns it
+  knows about. Neither approach subsumes the other.
+- **Provider detection**: `plugin-ci.yml`'s mock stubs `registerResourceProvider`/
+  `registerAutopilotProvider`/`registerWeatherProvider`/`registerHistoryProvider` as silent
+  no-ops (so `start()` doesn't crash) but never records which were called — no "has-providers"
+  equivalent. `registerRadarProvider` and `registerBLEProvider`/`bleApi` aren't stubbed at all,
+  so a plugin calling either hits the lifecycle check's `isMockGap()` heuristic
+  (`"X is not a function"` → downgraded to a warning) — meaning BLE/radar plugins can never get
+  a real pass/fail from this check, only "maybe fine, our mock doesn't know this method."
+- **No vulnerability scanning**: `plugin-ci.yml` has no `npm audit` step at all (verified via
+  grep — nothing matches `npm audit` anywhere in the file). The registry tiers 20/15/10/0 points
+  on critical/high/moderate advisory counts.
+- **No core-dependency-freshness check**: the registry flags (`-80`, near-fatal) a plugin whose
+  declared range on a core package (`@signalk/server-api`, `@canboat/canboatjs`, etc.) excludes
+  that package's latest same-major release — a stale pin that holds the package back in every
+  user's `~/.signalk` install. `plugin-ci.yml` does no registry-latest-version lookups anywhere.
+- **Changelog/screenshots checked differently, not just independently**: both projects score
+  "has a changelog" and "has screenshots," but not the same underlying fact.
+  `plugin-ci.yml` checks the *source tree* for a `CHANGELOG.md`-family file or a
+  `.github/release.yml` *declaration of intent*; the registry checks the *published tarball*
+  plus an actual matching GitHub Release via the releases.atom feed — the real outcome. A
+  plugin with `release.yml` but no release ever cut for a given version passes one and fails
+  the other. Screenshots run the other way: `plugin-ci.yml` additionally verifies the declared
+  paths resolve to real files in the repo; the registry only checks the array is non-empty.
+- **Cross-repo coupling, untested by either side**: the registry's `plugin-ci-commands.ts`
+  parses a plugin's own `.github/workflows/*.yml`, looking for a job that
+  `uses: SignalK/signalk-server/.github/workflows/plugin-ci.yml` and reads `build-command`/
+  `test-command` straight out of its `with:` block, as a fallback when a plugin's tarball tests
+  aren't runnable. If `plugin-ci.yml` ever renamed those inputs or changed how they're declared,
+  the registry's source-test fallback would silently break, and nothing in either repo's test
+  suite would catch it.
+
 ## Running the whole suite
 
 `fixtures.json` is the machine-readable manifest (branch → expected conclusion, plus an optional
