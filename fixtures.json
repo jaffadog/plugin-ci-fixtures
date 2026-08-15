@@ -3,6 +3,7 @@
   { "branch": "fixture/prepare-double-build", "expected": "success" },
   { "branch": "fixture/malicious-install-scripts", "expected": "success" },
   { "branch": "fixture/integration-smoke", "expected": "success" },
+  { "branch": "fixture/vite-build-node-split", "expected": "success" },
   { "branch": "fixture/native-optional-broken", "expected": "failure" },
   { "branch": "fixture/requires-cascade-dep", "expected": "success" },
   { "branch": "fixture/requires-cascade", "expected": "success" },

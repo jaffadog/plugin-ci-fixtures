@@ -52,6 +52,7 @@ it's worth checking directly rather than guessing.
 | [`fixture/prepare-double-build`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/prepare-double-build) | A `prepare` script that would double-build if `--ignore-scripts` weren't applied consistently | **Green** — the build-count marker must show exactly 1 |
 | [`fixture/malicious-install-scripts`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/malicious-install-scripts) | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
 | [`fixture/integration-smoke`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/integration-smoke) | `enable-signalk-integration: true` on an otherwise-valid plugin, with a `test:integration` script that pings the server | **Green**, including the `Integration` job — proves the job's core mechanism works before layering harder scenarios on top |
+| [`fixture/vite-build-node-split`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/vite-build-node-split) | The exact real-world scenario that motivated this PR: `vite` (`engines.node: "^20.19.0 \|\| >=22.12.0"`) as the build tool on `build-node-version: '24'`, tested across `node-versions: ["18","20","22","24","26"]`, plus a `signalk-integration-matrix` pinning sk2.0.0+node18 and sk-latest+node24 | **Green** — before this PR, the Node 18 job would have tried to run `vite build` itself and failed outright |
 | [`fixture/native-optional-broken`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-optional-broken) | An optional native dependency (`bcrypt`) the plugin requires unconditionally, no try/catch | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install. `armv7` passes — it has no equivalent uncompiled-reinstall step |
 | [`fixture/requires-cascade`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade) | `signalk.requires` pointing at [`fixture/requires-cascade-dep`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/requires-cascade-dep) via a `github:` git-URL specifier | **Green**, with `enable-signalk-integration: true` — `test:integration` confirms the server is reachable *and* that the required package's `postinstall` never ran |
 
@@ -68,9 +69,11 @@ purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 | [`fixture/stray-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/stray-files) | `test` writes an untracked file as a side effect | **Green, with a warning annotation** — the stray-files check is advisory-only (`::warning::`, never fails the build); see this branch's own README for why a passing run here doesn't fully verify the check still works |
 | [`fixture/native-required`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-required) | `bcrypt` as a *required* (not optional) dependency | **Red** — fails "Simulate App Store install" directly (the static scan errors on a required native addon), aborting the rest of the desktop job before the test step even runs |
 
-Every planned fixture from the original list is now built. `armv7` and the `Integration` job
-don't run every check the `desktop` job does (see individual fixture READMEs for which ones each
-skips) — that's a real scope boundary, not a gap to fix.
+Every planned fixture from the original list is now built, plus `vite-build-node-split`, which
+reproduces the PR's own original motivating bug report end-to-end rather than a synthesized
+scenario. `armv7` and the `Integration` job don't run every check the `desktop` job does (see
+individual fixture READMEs for which ones each skips) — that's a real scope boundary, not a gap
+to fix.
 
 ## Running the whole suite
 
