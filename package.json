@@ -1,0 +1,14 @@
+{
+  "name": "signalk-plugin-ci-fixture-bad-entry-point",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: entry point exports a plain object instead of a constructor function.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
