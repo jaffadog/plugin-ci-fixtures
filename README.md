@@ -60,6 +60,8 @@ it's worth checking directly rather than guessing.
 | [`fixture/bad-schema`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-schema) | `plugin.schema()` throws | **Red** — fails "Validate plugin.schema() if defined" specifically |
 | [`fixture/bad-lifecycle`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-lifecycle) | `stop()` throws a real error (not a "mock gap" message pattern) | **Red** — fails "Test plugin stop()/start() lifecycle" on the first `stop()` call |
 | [`fixture/restart-broken`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/restart-broken) | `stop()` succeeds, but the *second* `start()` (the restart re-entry) throws | **Red** — fails the same lifecycle check as `bad-lifecycle`, but at a distinct step: `stop()` throwing exits before the second `start()` is ever reached, so this is separate coverage, not a duplicate |
+| [`fixture/bad-schema-default`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/bad-schema-default) | `start({})` succeeds, but `start()` with the plugin's own `schema`-declared default config throws | **Red** — fails the same lifecycle check at a third distinct step (schema-defaults activation), proving the mechanism this fixture was built to prove actually works |
+| [`fixture/vulnerable-dependency`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/vulnerable-dependency) | A real, known-vulnerable dependency (`minimist@0.0.8`, critical prototype-pollution CVE) | **Green, with a warning annotation** — `npm audit` is advisory-only; like `stray-files`/`api-usage-warnings`, a passing run here needs a human to read the actual warning |
 | [`fixture/api-misuse`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-misuse) | `start()` reads `app.server`, `app.deltaCache`, `app.pluginsMap`, and `historyApiHttpRegistry` — the full "misuse" (error) tier of the API-usage scan | **Red** — fails the API-misuse scan with all four reported together (static text matches; none need to execute) |
 | [`fixture/api-usage-warnings`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/api-usage-warnings) | The eleven warning-tier patterns in the same scan: deprecated APIs, a direct-Express-route anti-pattern, 3 file-storage anti-patterns, 5 security anti-patterns | **Green, with eleven warning annotations** — like `stray-files`, a passing run here is necessary but not sufficient; see this branch's own README |
 | [`fixture/missing-pack-files`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/missing-pack-files) | An `exports` sub-path pointing at a file excluded by `files` | **Red** — fails "Verify npm pack includes all required files". `main`'s own file is always force-included by `npm pack` regardless of `files` (confirmed locally) — this fixture uses a named `exports` sub-path instead, since that *isn't* force-included |
@@ -70,13 +72,16 @@ it's worth checking directly rather than guessing.
 independent scenario — its own CI run should be green (it's a normal valid plugin), but its
 purpose is to be installed *by* `requires-cascade` via `signalk.requires`.
 
-Every planned fixture from the original list is now built, plus six added later by auditing
-`plugin-ci.yml`'s own CI-summary checklist against this suite and closing what it found
-uncovered: `vite-build-node-split` (reproduces the PR's own original motivating bug report
-end-to-end), the extended `api-misuse` and new `api-usage-warnings` (the full API-usage scan,
-both severity tiers), `restart-broken` (the lifecycle check's second-`start()` failure path,
-distinct from `bad-lifecycle`'s `stop()` failure), and `bad-package-metadata` /
-`bad-entry-point` (the two highest-priority package.json/entry-point negative cases). `armv7`
+Every planned fixture from the original list is now built, plus eight added later by auditing
+`plugin-ci.yml`'s own CI-summary checklist (and, separately, signalk-plugin-registry's scoring)
+against this suite and closing what each found uncovered: `vite-build-node-split` (reproduces
+the PR's own original motivating bug report end-to-end), the extended `api-misuse` and new
+`api-usage-warnings` (the full API-usage scan, both severity tiers), `restart-broken` (the
+lifecycle check's second-`start()` failure path, distinct from `bad-lifecycle`'s `stop()`
+failure), `bad-package-metadata` / `bad-entry-point` (the two highest-priority
+package.json/entry-point negative cases), and `bad-schema-default` / `vulnerable-dependency`
+(proving the two `plugin-ci.yml` capabilities — schema-derived-defaults activation and `npm
+audit` — added directly in response to the signalk-plugin-registry comparison below). `armv7`
 and the `Integration` job don't run every check the `desktop` job does (see individual fixture
 READMEs for which ones each skips) — that's a real scope boundary, not a gap to fix.
 
