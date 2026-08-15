@@ -9,3 +9,6 @@ name. Each appends its own name to `install-scripts-ran.log` if it ever executes
 **Expected result: green.** The test asserts the log is empty at the end of the desktop job's
 pipeline — proving none of the three ever ran anywhere along the way, matching how the real
 SignalK server installs plugins (`--ignore-scripts`, always).
+
+See the [main branch README](https://github.com/jaffadog/plugin-ci-fixtures/blob/main/README.md)
+for how this repo's branch-per-fixture scheme works.
