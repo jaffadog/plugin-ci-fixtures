@@ -8,3 +8,6 @@ provider API checks pass, `test:integration` reaches the server — before layer
 
 **Expected result: green**, including the `Integration` job (not skipped, unlike every other
 fixture so far).
+
+See the [main branch README](https://github.com/jaffadog/plugin-ci-fixtures/blob/main/README.md)
+for how this repo's branch-per-fixture scheme works.
