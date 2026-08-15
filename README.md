@@ -8,6 +8,13 @@ workflow.
 the `SignalK` GitHub org once the fixture set is proven out — ask a SignalK maintainer about
 status if you're picking this up and it's still here.
 
+**If/when this repo moves to a new owner**: every cross-branch link in this repo (main → fixture
+branches, and each fixture branch back to main) is a full GitHub URL, since plain relative
+markdown links can't express "this repo, whichever branch, regardless of owner" — crossing
+branches on GitHub always requires `/OWNER/REPO/blob/BRANCH/...`. All of them contain the literal
+string `jaffadog/plugin-ci-fixtures`, so updating every branch after a transfer is one command per
+branch: `git grep -rl jaffadog | xargs sed -i 's/jaffadog/NEW_OWNER/' && git commit -am "update owner after transfer" && git push`.
+
 ## How this repo works
 
 There is no code on `main` other than this README. Each **branch** is a minimal, deliberately
@@ -45,7 +52,7 @@ it's worth checking directly rather than guessing.
 | [`fixture/prepare-double-build`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/prepare-double-build) | A `prepare` script that would double-build if `--ignore-scripts` weren't applied consistently | **Green** — the build-count marker must show exactly 1 |
 | [`fixture/malicious-install-scripts`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/malicious-install-scripts) | `preinstall`/`install`/`postinstall` scripts (the same "risky scripts" group `plugin-ci.yml` itself flags) that log if they ever run | **Green** — the log must be empty, proving none of the three ever ran |
 | [`fixture/integration-smoke`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/integration-smoke) | `enable-signalk-integration: true` on an otherwise-valid plugin, with a `test:integration` script that pings the server | **Green**, including the `Integration` job — proves the job's core mechanism works before layering harder scenarios on top |
-| `fixture/native-optional-broken` *(planned)* | An optional native dependency the plugin doesn't actually handle the absence of | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install |
+| [`fixture/native-optional-broken`](https://github.com/jaffadog/plugin-ci-fixtures/tree/fixture/native-optional-broken) | An optional native dependency (`bcrypt`) the plugin requires unconditionally, no try/catch | **Red** on the test run — passes the static App Store scan (warning only) but fails once tests run against the real, uncompiled install. `armv7` passes — it has no equivalent uncompiled-reinstall step |
 | `fixture/requires-cascade` *(planned)* | `signalk.requires` pointing at another fixture branch | **Green**, with `enable-signalk-integration: true` — the required package must install with `--ignore-scripts` same as the plugin itself |
 
 More fixtures (bad schema, bad lifecycle, deprecated API usage, missing pack files, stray files,
