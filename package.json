@@ -1,0 +1,17 @@
+{
+  "name": "signalk-plugin-ci-fixture-native-optional-broken",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: an optional native dependency the plugin doesn't actually handle the absence of.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "optionalDependencies": {
+    "bcrypt": "^5.1.1"
+  },
+  "license": "Apache-2.0"
+}

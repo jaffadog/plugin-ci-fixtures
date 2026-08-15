@@ -1,0 +1,9 @@
+name: SignalK Plugin CI Fixture — native-optional-broken
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: jaffadog/signalk-server/.github/workflows/plugin-ci.yml@feat/separate-build-node-version
