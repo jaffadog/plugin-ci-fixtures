@@ -155,6 +155,20 @@ changing `plugin-ci.yml` itself, not this suite:
   the registry's source-test fallback would silently break, and nothing in either repo's test
   suite would catch it.
 
+### Other filed-away follow-ups
+
+- **No way to make lint blocking.** `npm run lint --if-present` always runs with
+  `continue-on-error: true` — advisory only, unconditionally, for anyone who happens to have a
+  `lint` script. `format-check-command` is the mirror image: it only runs if a plugin author
+  explicitly sets it, and is blocking when they do. That asymmetry has a reason (lint fires
+  automatically off of whatever's in `package.json`, with no explicit decision from the author
+  about how strict it should be — defaulting to advisory avoids surprising someone into a
+  blocked CI over a lint config they never chose to gate on; `format-check-command` only runs
+  because the author deliberately typed that input, so blocking is the reasonable default at
+  that point), but it does leave a real gap: there's no `lint-command`-style opt-in for someone
+  who *wants* lint to block. `fail-on-warning` is a plausible precedent for closing this — lint
+  isn't currently one of its six checks.
+
 ## Running the whole suite
 
 `fixtures.json` is the machine-readable manifest (branch → expected conclusion, plus an optional
