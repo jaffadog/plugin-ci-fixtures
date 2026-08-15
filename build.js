@@ -10,9 +10,11 @@ const counterPath = path.join(__dirname, 'build-count.txt')
 const current = parseInt(fs.readFileSync(counterPath, 'utf8').trim() || '0', 10)
 fs.writeFileSync(counterPath, String(current + 1))
 
-// Diagnostic trail (temporary): record exactly where/when each invocation
-// happened, since the counter alone doesn't say which install step it
-// came from.
+// Diagnostic trail: record exactly where/when each invocation happened,
+// since the counter alone doesn't say which install step it came from.
+// This is what pinned down the real npm-pack-check culprit after the
+// first fix (App Store simulation) only got the count from 3 to 2, not 1
+// — keeping it in for next time.
 const tracePath = path.join(__dirname, 'build-trace.log')
 const line = `[${new Date().toISOString()}] cwd=${process.cwd()} __dirname=${__dirname} npm_lifecycle_event=${process.env.npm_lifecycle_event} npm_config_argv=${process.env.npm_config_argv || ''}\n`
 fs.appendFileSync(tracePath, line)
