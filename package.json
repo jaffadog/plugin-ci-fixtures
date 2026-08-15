@@ -1,0 +1,14 @@
+{
+  "name": "signalk-plugin-ci-fixture-api-misuse",
+  "version": "1.0.0",
+  "description": "plugin-ci.yml fixture: accesses app.server, an internal property not part of the plugin API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": ["signalk-node-server-plugin"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "Apache-2.0"
+}
